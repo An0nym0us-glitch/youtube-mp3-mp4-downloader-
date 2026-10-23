@@ -25,7 +25,7 @@ object Downloader {
             Engine.awaitReady()
             val tracker = ProgressTracker(task.id, task.itemCount)
             try {
-                YoutubeDL.execute(buildRequest(task, workDir), task.id, false) { _, _, line -> tracker.onLine(line) }
+                YoutubeDL.execute(buildRequest(context, task, workDir), task.id, false) { _, _, line -> tracker.onLine(line) }
             } catch (e: YoutubeDLException) {
                 // Playlists run with --ignore-errors, so private/removed videos fail without losing the rest.
                 if (outputs(workDir, task.format).isEmpty()) throw e
@@ -65,7 +65,7 @@ object Downloader {
     private fun markCancelled(id: String) =
         DownloadQueue.update(id) { it.copy(status = Status.CANCELLED, detail = "Cancelled") }
 
-    private fun buildRequest(task: DownloadTask, workDir: File): YoutubeDLRequest {
+    private fun buildRequest(context: Context, task: DownloadTask, workDir: File): YoutubeDLRequest {
         val name = task.nameTemplate.ifBlank { Options.DEFAULT_NAME_TEMPLATE }
         val template = if (task.isPlaylist) "%(playlist_index)03d - $name" else name
         return YoutubeDLRequest(task.url).apply {
@@ -100,6 +100,7 @@ object Downloader {
                 }
             }
             if (task.embedMetadata) addOption("--embed-metadata")
+            Cookies.applyTo(this, context, task.extraArgs)
         }
     }
 

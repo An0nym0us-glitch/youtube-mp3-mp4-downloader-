@@ -35,6 +35,8 @@ data class Prefs(
     val nameTemplate: String = Options.DEFAULT_NAME_TEMPLATE,
     val embedMetadata: Boolean = true,
     val autoUpdate: Boolean = true,
+    /** Raw yt-dlp options appended to every run, for power users and quick workarounds. */
+    val extraArgs: String = "",
 )
 
 /** User preferences, persisted in SharedPreferences and observable from Compose. */
@@ -70,6 +72,7 @@ object Settings {
             nameTemplate = prefs.getString(KEY_TEMPLATE, null) ?: d.nameTemplate,
             embedMetadata = prefs.getBoolean(KEY_METADATA, d.embedMetadata),
             autoUpdate = prefs.getBoolean(KEY_AUTO_UPDATE, d.autoUpdate),
+            extraArgs = prefs.getString(KEY_EXTRA_ARGS, null) ?: d.extraArgs,
         )
     }
 
@@ -82,6 +85,7 @@ object Settings {
         putString(KEY_TEMPLATE, p.nameTemplate)
         putBoolean(KEY_METADATA, p.embedMetadata)
         putBoolean(KEY_AUTO_UPDATE, p.autoUpdate)
+        putString(KEY_EXTRA_ARGS, p.extraArgs)
     }
 
     private const val KEY_FORMAT = "format"
@@ -92,5 +96,6 @@ object Settings {
     private const val KEY_TEMPLATE = "name_template"
     private const val KEY_METADATA = "embed_metadata"
     private const val KEY_AUTO_UPDATE = "auto_update"
+    private const val KEY_EXTRA_ARGS = "extra_args"
     private const val KEY_LAST_UPDATE = "last_update_check"
 }

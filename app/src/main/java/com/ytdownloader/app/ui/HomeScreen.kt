@@ -216,6 +216,7 @@ private fun EngineBanner(state: Engine.State) {
 @Composable
 private fun LinkCard(vm: MainViewModel) {
     val clipboard = LocalClipboardManager.current
+    val context = LocalContext.current
     ElevatedCard(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             OutlinedTextField(
@@ -268,6 +269,11 @@ private fun LinkCard(vm: MainViewModel) {
             if (vm.loading) LinearProgressIndicator(Modifier.fillMaxWidth())
             vm.error?.let {
                 Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                if (Errors.needsLogin(it)) {
+                    Button(modifier = Modifier.fillMaxWidth(), onClick = { Intents.signIn(context) }) {
+                        Text("Sign in to YouTube")
+                    }
+                }
             }
         }
     }
@@ -392,6 +398,7 @@ private fun TaskCard(
     onOpen: () -> Unit,
     onShare: () -> Unit,
 ) {
+    val context = LocalContext.current
     OutlinedCard(Modifier.fillMaxWidth()) {
         Row(Modifier.padding(12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             AsyncImage(
@@ -426,7 +433,12 @@ private fun TaskCard(
                             TextButton(onClick = onOpen) { Text(if (task.output?.uri != null) "Open" else "Show folder") }
                             if (task.output?.uri != null) TextButton(onClick = onShare) { Text("Share") }
                         }
-                        Status.FAILED, Status.CANCELLED -> TextButton(onClick = onRetry) { Text("Retry") }
+                        Status.FAILED, Status.CANCELLED -> {
+                            TextButton(onClick = onRetry) { Text("Retry") }
+                            if (Errors.needsLogin(task.error)) {
+                                TextButton(onClick = { Intents.signIn(context) }) { Text("Sign in") }
+                            }
+                        }
                     }
                     Spacer(Modifier.weight(1f))
                     if (!task.status.isActive) {

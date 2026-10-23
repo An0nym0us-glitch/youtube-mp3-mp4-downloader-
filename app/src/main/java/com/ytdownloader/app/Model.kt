@@ -53,6 +53,7 @@ data class DownloadTask(
     val folderName: String,
     val nameTemplate: String,
     val embedMetadata: Boolean,
+    val extraArgs: String,
     val status: Status = Status.QUEUED,
     val progress: Float = 0f,
     val detail: String = "",
@@ -62,8 +63,19 @@ data class DownloadTask(
 )
 
 object Errors {
+    const val LOGIN_REQUIRED = "YouTube wants you to sign in to confirm you're not a bot. " +
+        "Tap \"Sign in to YouTube\", log in once, then try again."
+
+    /** YouTube's bot check, or age/member-restricted videos: all fixed by passing login cookies. */
+    fun needsLogin(message: String?): Boolean {
+        val m = message.orEmpty()
+        return m.contains("not a bot") || m.contains("Sign in to confirm") || m.contains("--cookies") ||
+            m == LOGIN_REQUIRED
+    }
+
     /** yt-dlp dumps warnings and tracebacks to stderr; surface the line that explains the failure. */
     fun friendly(e: Throwable): String {
+        if (needsLogin(e.message)) return LOGIN_REQUIRED
         val lines = e.message.orEmpty().lines().map { it.trim() }.filter { it.isNotEmpty() }
         val line = lines.firstOrNull { it.startsWith("ERROR:") }?.removePrefix("ERROR:")?.trim()
             ?: lines.lastOrNull()

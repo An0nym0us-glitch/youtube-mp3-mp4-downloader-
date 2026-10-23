@@ -1,5 +1,6 @@
 package com.ytdownloader.app
 
+import android.content.Context
 import android.net.Uri
 import com.yausername.youtubedl_android.YoutubeDL
 import com.yausername.youtubedl_android.YoutubeDLRequest
@@ -26,7 +27,7 @@ object Links {
 }
 
 object InfoFetcher {
-    suspend fun fetch(url: String, singleOnly: Boolean): MediaInfo = withContext(Dispatchers.IO) {
+    suspend fun fetch(context: Context, url: String, singleOnly: Boolean): MediaInfo = withContext(Dispatchers.IO) {
         Engine.awaitReady()
         // -J prints one JSON document for a video or a whole playlist; --flat-playlist keeps
         // playlists fast by not resolving every entry.
@@ -34,6 +35,7 @@ object InfoFetcher {
             .addOption("-J")
             .addOption("--flat-playlist")
             .addOption(if (singleOnly) "--no-playlist" else "--yes-playlist")
+        Cookies.applyTo(request, context, Settings.current.extraArgs)
         val out = YoutubeDL.execute(request, null, false, null).out
         parse(url, JSONObject(out))
     }

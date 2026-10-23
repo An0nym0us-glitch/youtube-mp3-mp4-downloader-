@@ -78,7 +78,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         fetchJob = viewModelScope.launch {
             val self = coroutineContext.job
             try {
-                val result = InfoFetcher.fetch(url, singleOnly)
+                val result = InfoFetcher.fetch(getApplication(), url, singleOnly)
                 info = result
                 selected = result.entries.map { it.index }.toSet()
                 val defaultHeight = Settings.current.videoHeight
@@ -116,6 +116,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                 folderName = s.folderName,
                 nameTemplate = s.nameTemplate,
                 embedMetadata = s.embedMetadata,
+                extraArgs = s.extraArgs,
             )
         )
         onLinkChange("")

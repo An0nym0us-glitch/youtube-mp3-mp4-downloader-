@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import com.ytdownloader.app.LoginActivity
 import com.ytdownloader.app.SavedOutput
 
 object Intents {
@@ -28,6 +29,10 @@ object Intents {
             .putExtra(Intent.EXTRA_STREAM, uri)
             .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         context.startActivity(Intent.createChooser(send, output.name))
+    }
+
+    fun signIn(context: Context) {
+        context.startActivity(Intent(context, LoginActivity::class.java))
     }
 
     fun openDownloads(context: Context) {

@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -19,11 +21,14 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ytdownloader.app.Cookies
 import com.ytdownloader.app.Engine
 import com.ytdownloader.app.MediaFormat
 import com.ytdownloader.app.Options
@@ -35,6 +40,7 @@ import com.ytdownloader.app.Settings
 fun SettingsSheet(settings: Prefs, onDismiss: () -> Unit) {
     val context = LocalContext.current
     val version = remember { runCatching { Engine.version(context) }.getOrDefault("unknown") }
+    val signedIn by Cookies.signedIn.collectAsStateWithLifecycle()
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(
             modifier = Modifier
@@ -43,6 +49,23 @@ fun SettingsSheet(settings: Prefs, onDismiss: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text("Settings", style = MaterialTheme.typography.headlineSmall)
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    Text("YouTube account", style = MaterialTheme.typography.bodyLarge)
+                    Text(
+                        if (signedIn) "Signed in. Downloads use your session."
+                        else "Sign in if YouTube asks you to confirm you're not a bot",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                if (signedIn) {
+                    OutlinedButton(onClick = { Cookies.signOut(context) }) { Text("Sign out") }
+                } else {
+                    Button(onClick = { Intents.signIn(context) }) { Text("Sign in") }
+                }
+            }
 
             SwitchRow(
                 title = "Pack into a ZIP",
@@ -78,6 +101,14 @@ fun SettingsSheet(settings: Prefs, onDismiss: () -> Unit) {
                 singleLine = true,
                 label = { Text("File name template") },
                 supportingText = { Text("yt-dlp template, e.g. %(title)s or %(uploader)s - %(title)s") },
+            )
+
+            OutlinedTextField(
+                value = settings.extraArgs,
+                onValueChange = { v -> Settings.update { it.copy(extraArgs = v) } },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Extra yt-dlp options (advanced)") },
+                supportingText = { Text("Added to every request, e.g. --extractor-args \"youtube:player_client=tv\"") },
             )
 
             ChoiceRow("Default format", MediaFormat.entries, settings.format, { it.label }) { v ->

@@ -6,6 +6,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         Settings.init(this)
+        Cookies.init(this)
         Notifications.createChannels(this)
         Engine.start(this)
     }

@@ -23,6 +23,8 @@ Everything runs on the phone: the app ships with [yt-dlp](https://github.com/yt-
 | Embed tags & cover art | On |
 | Default format / MP3 bitrate / MP4 resolution | MP3 / 320 kbps / Best |
 | Auto-update yt-dlp | On |
+| YouTube account (sign in / sign out) | Signed out |
+| Extra yt-dlp options (advanced) | empty |
 
 ## Install
 
@@ -34,6 +36,14 @@ Everything runs on the phone: the app ships with [yt-dlp](https://github.com/yt-
 3. Allow "Install unknown apps" for your browser or file manager when Android asks.
 
 Requires Android 8.0+. The first launch takes a few seconds while the bundled engine unpacks.
+
+## Troubleshooting
+
+**"Sign in to confirm you're not a bot"**: YouTube sometimes blocks anonymous downloads, especially on mobile data or a VPN.
+Tap **Sign in to YouTube** under the error, or go to ⚙ → YouTube account. Log in once and try the link again.
+The app saves the session cookies privately and passes them to yt-dlp with `--cookies`. Sign out any time from ⚙.
+
+**Still failing?** Tap ⟳ to update yt-dlp. If that doesn't help, try switching between Wi-Fi and mobile data.
 
 ## Build locally
 
