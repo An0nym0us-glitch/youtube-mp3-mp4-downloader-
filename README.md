@@ -26,8 +26,7 @@ Everything runs on the phone: the app ships with [yt-dlp](https://github.com/yt-
 
 ## Install
 
-1. Open the repo's **Actions** tab, then the latest **Build Android APK** run, then download the `yt-downloader-apks` artifact.
-   (Pushing a tag like `v1.0.0` also attaches the APKs to a GitHub Release.)
+1. Open the repo's **Releases** page and download an APK from the latest release, or open the **Actions** tab, then the latest **Build Android APK** run, then download the `yt-downloader-apks` artifact.
 2. Install the APK on your phone:
    - `app-arm64-v8a-release.apk` for almost every phone from the last ~8 years
    - `app-armeabi-v7a-release.apk` for older 32-bit phones
