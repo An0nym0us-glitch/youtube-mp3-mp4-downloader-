@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Download arrow -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M49,26h10v28h12l-17,17l-17,-17h12z" />
+    <!-- Tray -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M36,74h36v5h-36z" />
+</vector>
